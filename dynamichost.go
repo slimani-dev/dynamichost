@@ -1,3 +1,7 @@
+// Package dynamichost provides a middleware plugin for Traefik that dynamically rewrites
+// request headers based on configurable regex patterns.
+package dynamichost
+
 package dynamichost
 
 import (
