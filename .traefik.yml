@@ -1,12 +1,13 @@
-displayName: Demo Plugin
+displayName: DynamicHost
 type: middleware
-iconPath: .assets/icon.png
 
-import: github.com/traefik/plugindemo
+import: github.com/slimani-dev/dynamic-host
 
 summary: '[Demo] Add Request Header'
 
 testData:
   Headers:
-    X-Demo: test
-    X-URL: '{{URL}}'
+    - Header
+      name: Host 
+      regexPattern: "^([^.]+)\\.localhost$"
+      newHost: "$1.example.com"

@@ -1,3 +1,3 @@
-module github.com/traefik/plugindemo
+module github.com/slimani-dev/dynamichost
 
 go 1.19
