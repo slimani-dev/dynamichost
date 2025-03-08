@@ -1,13 +1,12 @@
-displayName: DynamicHost
-type: middleware
+displayName: "DynamicHost"
+type: "middleware"
 
-import: github.com/slimani-dev/dynamic-host
+import: "github.com/slimani-dev/dynamichost"
 
-summary: '[Demo] Add Request Header'
+summary: "DynamicHost Plugin for Traefik"
 
 testData:
   Headers:
-    - Header
-      name: Host 
+    - name: "Host"
       regexPattern: "^([^.]+)\\.localhost$"
       newHost: "$1.example.com"
