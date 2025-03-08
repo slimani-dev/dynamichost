@@ -18,7 +18,7 @@ To use the `DynamicHost` plugin, you must define it in the **static configuratio
 experimental:
   plugins:
     dynamichost:
-      moduleName: github.com/yourusername/dynamichost-plugin
+      moduleName: github.com/slimani-dev/dynamichost
       version: v0.1.0
 ```
 
@@ -64,55 +64,5 @@ http:
 | `abc.localhost`   | `abc.example.com` |
 | `test.localhost`  | `test.example.com` |
 
-## Development
-
-To develop locally, use the local plugins feature of Traefik:
-
-```yaml
-# Static configuration
-experimental:
-  localPlugins:
-    dynamichost:
-      moduleName: github.com/yourusername/dynamichost-plugin
-```
-
-Place your plugin source code in the `./plugins-local` directory:
-
-```
-./plugins-local/
-    └── src
-        └── github.com
-            └── yourusername
-                └── dynamichost-plugin
-                    ├── main.go
-                    ├── go.mod
-                    ├── LICENSE
-                    ├── README.md
-```
-
-## Logs
-
-Currently, logs can be written using `os.Stdout.WriteString("...")` or `os.Stderr.WriteString("...")`. Future versions may support structured logging.
-
-## Plugin Catalog
-
-To add this plugin to the Traefik Plugin Catalog, ensure:
-
-- The repository has the `traefik-plugin` topic.
-- A `.traefik.yml` manifest is present with valid configuration.
-
-Example `.traefik.yml`:
-
-```yaml
-displayName: DynamicHost
-summary: Middleware that rewrites host dynamically based on regex.
-type: middleware
-import: github.com/yourusername/dynamichost-plugin
-testData:
-  regexPattern: "^([^.]+)\\.localhost$"
-  newHost: "$1.example.com"
-```
-
 ## License
 This project is licensed under the MIT License.
-
