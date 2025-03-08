@@ -8,5 +8,5 @@ summary: "DynamicHost Plugin for Traefik"
 testData:
   Headers:
     - name: "Host"
-      regexPattern: "^([^.]+)\\.localhost$"
+      regexPattern: "^(.*)\\.localhost$"
       newHost: "$1.example.com"
