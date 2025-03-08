@@ -6,13 +6,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/slimani-dev/dynamic-host"
+	"github.com/slimani-dev/dynamichost"
 )
 
 func TestDynamicHost(t *testing.T) {
 	cfg := dynamichost.CreateConfig()
-	cfg.Headers = map[string]string{
-		"Host": "^([^.]+)\\.localhost$ -> $1.example.com",
+	cfg.Headers = []dynamichost.HeaderConfig{
+		{
+			Name:         "Host",
+			RegexPattern: "^([^.]+)\\.localhost$",
+			NewHost:      "$1.example.com",
+		},
 	}
 
 	ctx := context.Background()
@@ -39,6 +43,6 @@ func assertHeader(t *testing.T, req *http.Request, key, expected string) {
 	t.Helper()
 
 	if req.Host != expected {
-		t.Errorf("invalid host value: %s", req.Host)
+		t.Errorf("expected %s to be %s, but got %s", key, expected, req.Host)
 	}
 }

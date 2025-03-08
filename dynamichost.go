@@ -1,7 +1,6 @@
 package dynamichost
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -9,16 +8,16 @@ import (
 	"text/template"
 )
 
-// Config holds the plugin configuration.
-type Config struct {
-	Headers []HeaderConfig `json:"headers,omitempty"`
-}
-
-// HeaderConfig represents a single header transformation rule.
+// HeaderConfig defines the structure for header transformations.
 type HeaderConfig struct {
 	Name         string `json:"name"`
 	RegexPattern string `json:"regexPattern"`
 	NewHost      string `json:"newHost"`
+}
+
+// Config the plugin configuration.
+type Config struct {
+	Headers []HeaderConfig `json:"headers,omitempty"`
 }
 
 // CreateConfig creates the default plugin configuration.
@@ -28,7 +27,7 @@ func CreateConfig() *Config {
 	}
 }
 
-// DynamicHost is the plugin structure.
+// DynamicHost a plugin that rewrites headers dynamically.
 type DynamicHost struct {
 	next     http.Handler
 	headers  []HeaderConfig
@@ -39,7 +38,7 @@ type DynamicHost struct {
 // New creates a new DynamicHost plugin.
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	if len(config.Headers) == 0 {
-		return nil, fmt.Errorf("headers configuration cannot be empty")
+		return nil, fmt.Errorf("headers cannot be empty")
 	}
 
 	return &DynamicHost{
@@ -50,29 +49,18 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 	}, nil
 }
 
-// ServeHTTP processes the request and modifies the Host header accordingly.
-func (dh *DynamicHost) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	for _, header := range dh.headers {
-		if header.Name == "Host" {
-			match, _ := regexp.MatchString(header.RegexPattern, req.Host)
-			if match {
-				tmpl, err := dh.template.Parse(header.NewHost)
-				if err != nil {
-					http.Error(rw, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
-				writer := &bytes.Buffer{}
-				err = tmpl.Execute(writer, req)
-				if err != nil {
-					http.Error(rw, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
-				req.Host = writer.String()
-				req.Header.Set("Host", writer.String())
-			}
+func (a *DynamicHost) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	for _, header := range a.headers {
+		re, err := regexp.Compile(header.RegexPattern)
+		if err != nil {
+			http.Error(rw, "Invalid regex pattern", http.StatusInternalServerError)
+			return
 		}
+
+		newHost := re.ReplaceAllString(req.Host, header.NewHost)
+		req.Host = newHost
+		req.Header.Set("Host", newHost)
 	}
-	dh.next.ServeHTTP(rw, req)
+
+	a.next.ServeHTTP(rw, req)
 }
