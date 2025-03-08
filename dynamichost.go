@@ -2,8 +2,6 @@
 // request headers based on configurable regex patterns.
 package dynamichost
 
-package dynamichost
-
 import (
 	"context"
 	"fmt"
